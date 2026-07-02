@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Automation System | Control Panel</title>
+  <meta name="description"
+    content="Voice-controlled smart home dashboard for ESP32-based automation — RGB lighting, ventilation fan, and DHT11 climate monitoring." />
+
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FFB020'/%3E%3Cstop offset='1' stop-color='%232DD4BF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='%2307090A'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='url(%23g)' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='6' fill='url(%23g)'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="ai-assistant.css" />
+</head>
+
+<body>
+
+  <!-- ============== PREMIUM PRELOADER (CSS-only, no JS) ============== -->
+  <div class="preloader" id="premiumLoader" aria-hidden="true">
+    <div class="preloader__field">
+      <span class="preloader__spark preloader__spark--1"></span>
+      <span class="preloader__spark preloader__spark--2"></span>
+      <span class="preloader__spark preloader__spark--3"></span>
+      <span class="preloader__spark preloader__spark--4"></span>
+    </div>
+
+    <div class="preloader__card">
+      <div class="preloader__ring-stack" aria-hidden="true">
+        <span class="preloader__ring preloader__ring--outer"></span>
+        <span class="preloader__ring preloader__ring--mid"></span>
+        <span class="preloader__ring preloader__ring--glow"></span>
+        <div class="preloader__logo">
+          <i class="fa-solid fa-microchip"></i>
+        </div>
+      </div>
+
+      <p class="preloader__brand">HOME&nbsp;AUTOMATION&nbsp;SYSTEM</p>
+
+      <p class="preloader__status">
+        Connecting to ESP32<span class="preloader__dots"><span>.</span><span>.</span><span>.</span></span>
+      </p>
+
+      <div class="preloader__progress" role="presentation">
+        <div class="preloader__progress-track">
+          <div class="preloader__progress-bar"></div>
+        </div>
+        <span class="preloader__progress-label">Establishing secure link</span>
+      </div>
+    </div>
+  </div>
+  <!-- ============== /PRELOADER ============== -->
+
+  <div class="ambient-bg" aria-hidden="true">
+    <span class="ambient-bg__blob ambient-bg__blob--a"></span>
+    <span class="ambient-bg__blob ambient-bg__blob--b"></span>
+    <span class="ambient-bg__blob ambient-bg__blob--c"></span>
+    <span class="ambient-bg__float ambient-bg__float--1"><i class="fa-solid fa-bolt"></i></span>
+    <span class="ambient-bg__float ambient-bg__float--2"><i class="fa-solid fa-wifi"></i></span>
+    <span class="ambient-bg__float ambient-bg__float--3"><i class="fa-solid fa-microchip"></i></span>
+  </div>
+
+  <div class="app-shell">
+
+    <header class="header glass">
+      <div class="header__brand">
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="header__logo" aria-hidden="true">
+          <i class="fa-solid fa-microchip"></i>
+        </div>
+        <div class="header__title">
+          <h1>Home Automation Control Panel</h1>
+          <span class="header__subtitle">ESP32 • Voice • Web</span>
+        </div>
+      </div>
+
+      <div class="header__actions">
+        <nav class="top-nav" id="topNav" aria-label="Primary navigation">
+          <a class="top-nav__link active" href="#dashboard"><i class="fa-solid fa-gauge-high"></i>Dashboard</a>
+          <a class="top-nav__link" href="#circuit"><i class="fa-solid fa-diagram-project"></i>Circuit Diagram</a>
+          <a class="top-nav__link" href="#code"><i class="fa-solid fa-code"></i>ESP32 Code</a>
+          <a class="top-nav__link" href="#details"><i class="fa-solid fa-circle-info"></i>Project Details</a>
+        </nav>
+        <div class="header__actions-right">
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle bright theme">
+            <i class="fa-solid fa-sun"></i>
+            <span>Bright</span>
+          </button>
+          <div class="header__datetime" id="headerDatetime">
+            <span class="datetime__date" id="currentDate">--</span>
+            <span class="datetime__time" id="currentTime">--:--:--</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero-strip glass" aria-label="System quick status">
+      <div class="hero-chip" id="chipConn">
+        <i class="fa-solid fa-satellite-dish hero-chip__icon"></i>
+        <div class="hero-chip__body">
+          <span class="hero-chip__label">Connection</span>
+          <span class="hero-chip__value" id="chipConnValue">Connecting…</span>
+        </div>
+      </div>
+      <div class="hero-chip">
+        <i class="fa-solid fa-temperature-half hero-chip__icon hero-chip__icon--amber"></i>
+        <div class="hero-chip__body">
+          <span class="hero-chip__label">Temperature</span>
+          <span class="hero-chip__value" id="chipTemp">-- °C</span>
+        </div>
+      </div>
+      <div class="hero-chip">
+        <i class="fa-solid fa-droplet hero-chip__icon hero-chip__icon--teal"></i>
+        <div class="hero-chip__body">
+          <span class="hero-chip__label">Humidity</span>
+          <span class="hero-chip__value" id="chipHumidity">-- %</span>
+        </div>
+      </div>
+      <div class="hero-chip">
+        <i class="fa-solid fa-plug-circle-bolt hero-chip__icon hero-chip__icon--copper"></i>
+        <div class="hero-chip__body">
+          <span class="hero-chip__label">Devices Active</span>
+          <span class="hero-chip__value" id="chipDevices">0 / 3</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="dashboard">
+      <div class="section-intro glass">
+        <div>
+          <p class="section-eyebrow">Live control room</p>
+          <h2>Smart Home Dashboard</h2>
+          <p>Monitor climate, command lighting and ventilation, and trigger voice automation from one polished IoT
+            interface.</p>
+        </div>
+        <div class="section-intro__pill">
+          <i class="fa-solid fa-shield-halved"></i>
+          Secure ESP32 control
+        </div>
+      </div>
+
+      <main class="dashboard">
+
+        <!-- CLIMATE / DHT11 SENSOR CARD (signature — wide) -->
+        <section class="card climate-card card--wide glass" aria-labelledby="climateHeading">
+          <div class="card__header">
+            <i class="fa-solid fa-cloud-sun-rain card__icon"></i>
+            <h2 id="climateHeading">Climate Sensor &middot; DHT11</h2>
+            <span class="live-tag"><span class="status-dot"></span>Live</span>
+          </div>
+
+          <div class="gauge-cluster">
+
+            <!-- Temperature gauge -->
+            <div class="gauge">
+              <svg class="gauge__ring" viewBox="0 0 200 200">
+                <circle class="gauge__track" cx="100" cy="100" r="86" />
+                <circle class="gauge__fill gauge__fill--amber" id="tempGaugeFill" cx="100" cy="100" r="86" />
+              </svg>
+              <div class="gauge__readout">
+                <span class="gauge__value" id="tempValue">--</span>
+                <span class="gauge__unit">&deg;C</span>
+                <span class="gauge__label">Temperature</span>
+              </div>
+            </div>
+
+            <!-- Humidity gauge -->
+            <div class="gauge">
+              <svg class="gauge__ring" viewBox="0 0 200 200">
+                <circle class="gauge__track" cx="100" cy="100" r="86" />
+                <circle class="gauge__fill gauge__fill--teal" id="humidityGaugeFill" cx="100" cy="100" r="86" />
+              </svg>
+              <div class="gauge__readout">
+                <span class="gauge__value" id="humidityValue">--</span>
+                <span class="gauge__unit">%</span>
+                <span class="gauge__label">Humidity</span>
+              </div>
+            </div>
+
+            <!-- Trend sparkline -->
+            <div class="trend">
+              <div class="trend__header">
+                <span>Last 60 seconds</span>
+                <div class="trend__legend">
+                  <span class="legend-dot legend-dot--amber"></span>Temp
+                  <span class="legend-dot legend-dot--teal"></span>Humidity
+                </div>
+              </div>
+              <svg class="trend__svg" id="trendSvg" viewBox="0 0 300 100" preserveAspectRatio="none"></svg>
+              <p class="trend__hint">
+                <i class="fa-solid fa-circle-info"></i>
+                Simulated preview data — live DHT11 readings arrive over the ESP32 <code>/status</code> endpoint in
+                Phase 3.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- RGB LED CONTROL CARD -->
+        <section class="card led-card glass" aria-labelledby="ledHeading">
+          <div class="card__header">
+            <i class="fa-solid fa-lightbulb card__icon"></i>
+            <h2 id="ledHeading">RGB Lighting</h2>
+          </div>
+
+          <div class="led-preview">
+            <div class="led-orb" id="ledOrb"></div>
+            <div class="led-preview__info">
+              <span class="led-preview__label">Current Colour</span>
+              <span class="led-preview__value" id="colorValue">#00D9FF</span>
+              <span class="led-preview__state" id="ledStateLabel">LED is OFF</span>
+            </div>
+          </div>
+
+          <div class="channel-buttons">
+
+            <button class="channel-btn channel-btn--red" id="redToggleBtn" type="button" data-on="false">
+              <span class="channel-btn__dot"></span>Red
+            </button>
+
+            <button class="channel-btn channel-btn--green" id="greenToggleBtn" type="button" data-on="false">
+              <span class="channel-btn__dot"></span>Green
+            </button>
+
+            <button class="channel-btn channel-btn--blue" id="blueToggleBtn" type="button" data-on="false">
+              <span class="channel-btn__dot"></span>Blue
+            </button>
+
+          </div>
+
+          <div class="led-buttons">
+            <button class="btn btn--on" id="ledOnBtn" type="button">
+              <i class="fa-solid fa-power-off"></i> All On
+            </button>
+            <button class="btn btn--off" id="ledOffBtn" type="button">
+              <i class="fa-solid fa-power-off"></i> All Off
+            </button>
+          </div>
+
+          <div class="control-row">
+            <label for="brightnessSlider">
+              Brightness <span class="control-row__value" id="brightnessValue">80%</span>
+            </label>
+            <input type="range" id="brightnessSlider" min="0" max="100" value="80" />
+          </div>
+        </section>
+
+        <!-- FAN / VENTILATION CONTROL CARD (replaces door) -->
+        <section class="card fan-card glass" aria-labelledby="fanHeading">
+          <div class="card__header">
+            <i class="fa-solid fa-fan card__icon"></i>
+            <h2 id="fanHeading">Ventilation Fan</h2>
+          </div>
+
+          <div class="fan-visual">
+            <svg class="fan-svg" id="fanSvg" viewBox="0 0 160 160" role="img" aria-label="Fan status illustration">
+              <circle cx="80" cy="80" r="70" class="fan-housing" />
+              <g id="fanBlades" class="fan-blades">
+                <path d="M80 80 C 80 40, 110 20, 130 30 C 120 55, 100 70, 80 80 Z" />
+                <path d="M80 80 C 40 80, 20 50, 30 30 C 55 40, 70 60, 80 80 Z" />
+                <path d="M80 80 C 80 120, 50 140, 30 130 C 40 105, 60 90, 80 80 Z" />
+                <path d="M80 80 C 120 80, 140 110, 130 130 C 105 120, 90 100, 80 80 Z" />
+              </g>
+              <circle cx="80" cy="80" r="10" class="fan-hub" />
+            </svg>
+            <span class="fan-status" id="fanStatus">Idle</span>
+          </div>
+
+          <div class="control-row">
+            <label for="fanSpeedSlider">
+              Fan Speed <span class="control-row__value" id="fanSpeedValue">0%</span>
+            </label>
+            <input type="range" id="fanSpeedSlider" min="0" max="100" value="0" />
+          </div>
+
+          <div class="fan-buttons">
+            <button class="btn btn--on" id="fanOnBtn" type="button">
+              <i class="fa-solid fa-play"></i> Fan On
+            </button>
+            <button class="btn btn--off" id="fanOffBtn" type="button">
+              <i class="fa-solid fa-stop"></i> Fan Off
+            </button>
+          </div>
+        </section>
+
+        <!-- VOICE CONTROL CARD -->
+        <section class="card voice-card glass" aria-labelledby="voiceHeading">
+          <div class="card__header">
+            <i class="fa-solid fa-waveform-lines card__icon"></i>
+            <h2 id="voiceHeading">Voice Assistant</h2>
+          </div>
+
+          <div class="voice-brand">
+            <div class="voice-brand__logo" aria-hidden="true">
+              <i class="fa-solid fa-headset"></i>
+            </div>
+            <div class="voice-brand__text">
+              <span class="voice-brand__title">Voice Assistant</span>
+              <span class="voice-brand__subtitle">AI-powered voice control</span>
+            </div>
+          </div>
+
+          <div class="voice-mic-wrap">
+            <button class="mic-btn" id="micBtn" type="button" aria-label="Toggle voice listening">
+              <span class="mic-btn__pulse" aria-hidden="true"></span>
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+            <span class="voice-status" id="voiceStatusText">
+              <span class="status-dot"></span>Not Listening
+            </span>
+          </div>
+
+          <button class="btn btn--primary btn--block" id="startListeningBtn" type="button">
+            <i class="fa-solid fa-microphone-lines"></i> Start Listening
+          </button>
+
+          <label class="voice-label" for="recognizedText">Recognised Command</label>
+          <textarea id="recognizedText" class="voice-textarea" rows="2" readonly
+            placeholder="Try “turn on red light” or “turn on fan”…"></textarea>
+
+          <div class="voice-chips" aria-label="Example voice commands">
+            <span class="voice-chip">“turn on red light”</span>
+            <span class="voice-chip">“turn off fan”</span>
+            <span class="voice-chip">“turn on blue light”</span>
+          </div>
+        </section>
+
+        <!-- ACTIVITY LOG CARD (full width) -->
+        <section class="card log-card card--wide glass" aria-labelledby="logHeading">
+          <div class="card__header">
+            <i class="fa-solid fa-list-check card__icon"></i>
+            <h2 id="logHeading">Activity Log</h2>
+            <button class="log-clear" id="clearLogBtn" type="button" title="Clear activity log"
+              aria-label="Clear activity log">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+
+          <ul class="log-list" id="logList">
+            <li class="log-empty" id="logEmptyState">No activity yet — actions you take will appear here.</li>
+          </ul>
+        </section>
+
+      </main>
+    </section>
+
+    <section class="page-section" id="circuit">
+      <div class="panel glass">
+        <div class="card__header">
+          <i class="fa-solid fa-diagram-project card__icon"></i>
+          <h2>Circuit Diagram</h2>
+        </div>
+        <div class="diagram-card">
+          <div class="diagram-image-frame">
+            <img class="diagram-image" src="diagram_pic.png" alt="Home automation circuit diagram"
+              onerror="this.onerror=null;this.src='https://via.placeholder.com/900x500?text=Add+Your+Circuit+Photo';" />
+          </div>
+          <ul class="diagram-notes">
+            <li><span class="dot dot--amber"></span>ESP32 reads humidity and temperature from DHT11</li>
+            <li><span class="dot dot--teal"></span>RGB LED channels are driven by digital outputs</li>
+            <li><span class="dot dot--copper"></span>Fan relay or MOSFET is switched from the ESP32</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="code">
+      <div class="panel glass">
+        <div class="card__header">
+          <i class="fa-solid fa-code card__icon"></i>
+          <h2>ESP32 Controller Code</h2>
+          <button class="copy-btn" id="copyCodeBtn" type="button">
+            <i class="fa-solid fa-copy"></i> Copy
+          </button>
+        </div>
+        <div class="code-shell">
+          <pre class="code-block"><code id="espCodeBlock">
+            /*************************************************************
+ *  PROJECT: Home Automation Through Voice Commands
+ *  USING: ESP32, Blynk IoT, and Website (HTML/CSS/JS)
+ *
+ *  FEATURES:
+ *   - Wi-Fi connectivity
+ *   - Blynk Cloud sync (V0=Red, V1=Fan, V2=Green, V3=Blue,
+ *                        V4=Temperature, V5=Humidity, V6=AutoMode)
+ *   - HTTP Web Server with REST-style endpoints
+ *   - RGB LED control (digitalWrite based, ESP32 Core 3.x safe)
+ *   - 28BYJ-48 Stepper Motor control via AccelStepper (non-blocking)
+ *   - DHT11/DHT22 Temperature & Humidity sensing (non-blocking)
+ *   - Automatic fan control based on temperature/humidity thresholds
+ *     -> ONLY active when autoModeEnabled == true. Manual switch
+ *        presses (web or Blynk) always take priority and switch
+ *        the system into manual mode so DHT readings can't
+ *        silently undo your command.
+ *   - Detailed Serial debugging
+ *
+ *  BOARD: ESP32 Dev Module
+ *  CORE:  ESP32 Arduino Core 3.x (latest)
+ *************************************************************/
+
+#define BLYNK_TEMPLATE_ID   "your blynk template id"
+#define BLYNK_TEMPLATE_NAME "your blynk template name"
+#define BLYNK_PRINT Serial
+
+#include <WiFi.h>
+#include <WebServer.h>
+#include <BlynkSimpleEsp32.h>
+#include <AccelStepper.h>
+#include <DHT.h>              // Adafruit DHT sensor library
+
+/* ================= CREDENTIALS ================= */
+char auth[] = "qS4HP-bPIg1oZQ5bZuU8ZQ3wsF1htDao";
+char ssid[] = "Your wifi id";
+char pass[] = "your wifi password";
+
+/* ================= RGB LED PINS ================= */
+#define RED_PIN    13
+#define GREEN_PIN  27
+#define BLUE_PIN   14
+
+/* ================= STEPPER PINS ================= */
+#define IN1 26
+#define IN2 33
+#define IN3 25
+#define IN4 32
+
+/* ================= STEPPER CONFIG ================= */
+// 28BYJ-48 in HALF4WIRE mode via ULN2003.
+// Pin order for AccelStepper HALF4WIRE must be IN1, IN3, IN2, IN4
+AccelStepper stepper(AccelStepper::HALF4WIRE, IN1, IN3, IN2, IN4);
+const float FAN_SPEED = 600.0;   // steps/sec - continuous rotation speed
+
+/* ================= DHT SENSOR CONFIG ================= */
+#define DHT_PIN   4          // GPIO4 - free pin, not used elsewhere in this project
+#define DHT_TYPE  DHT11      // DHT11 by default; switch to DHT22 if needed
+DHT dht(DHT_PIN, DHT_TYPE);
+
+// Global variables holding the latest sensor readings.
+// NAN (Not-A-Number) is used as the "no valid reading yet / read failed" sentinel.
+float temperature = NAN;
+float humidity     = NAN;
+
+// Non-blocking timing control for sensor reads (replaces delay()-based polling)
+unsigned long lastSensorReadTime = 0;
+const unsigned long SENSOR_READ_INTERVAL = 2000; // read every 2 seconds
+
+/* ================= AUTO FAN CONTROL CONFIG ================= */
+// Fan turns ON automatically if temperature OR humidity crosses the "ON" threshold.
+// Fan turns OFF automatically once BOTH values drop back below the same threshold.
+// This logic ONLY runs while autoModeEnabled == true (see below).
+const float AUTO_TEMP_ON_THRESHOLD  = 30.0;  // °C - fan turns ON above this
+const float AUTO_TEMP_OFF_THRESHOLD = 30.0;  // °C - fan turns OFF below this
+const float AUTO_HUM_ON_THRESHOLD   = 60.0;  // %  - fan turns ON above this
+const float AUTO_HUM_OFF_THRESHOLD  = 60.0;  // %  - fan turns OFF below this
+
+/* ================= STATE VARIABLES ================= */
+bool redState    = false;
+bool greenState  = false;
+bool blueState   = false;
+bool fanState    = false;
+
+// NEW: Mode flag - this is the fix.
+// false (default) = MANUAL mode: fan only responds to explicit on/off commands.
+//                    DHT readings are still taken and reported, but autoFanControl()
+//                    will NOT touch the fan.
+// true             = AUTO mode: DHT readings automatically drive the fan, exactly
+//                    like before.
+// Any manual /fan/on, /fan/off, or Blynk V1 toggle forces autoModeEnabled = false,
+// so your manual command always wins and can never be silently reversed by the
+// sensor 2 seconds later.
+bool autoModeEnabled = false;
+
+/* ================= WEB SERVER ================= */
+WebServer server(80);
+
+/* ================= FUNCTION PROTOTYPES ================= */
+void connectWiFi();
+void setupServerRoutes();
+void handleRedOn();
+void handleRedOff();
+void handleGreenOn();
+void handleGreenOff();
+void handleBlueOn();
+void handleBlueOff();
+void handleFanOn();
+void handleFanOff();
+void handleModeAuto();     // NEW: /mode/auto endpoint
+void handleModeManual();   // NEW: /mode/manual endpoint
+void handleStatus();
+void handleSensor();
+void handleNotFound();
+void applyRed(bool state);
+void applyGreen(bool state);
+void applyBlue(bool state);
+void applyFan(bool state);
+void readSensor();
+void autoFanControl();
+String buildStatusJSON();
+String buildSensorJSON();
+
+/*************************************************************
+ *  SETUP
+ *************************************************************/
+void setup() {
+  Serial.begin(115200);
+  delay(500);
+  Serial.println();
+  Serial.println("=================================================");
+  Serial.println(" HOME AUTOMATION SYSTEM - ESP32 BOOTING...");
+  Serial.println("=================================================");
+
+  // --- RGB LED pin setup ---
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(GREEN_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
+  Serial.println("[INIT] RGB LED pins configured (13=R, 27=G, 14=B)");
+
+  // --- Stepper setup ---
+  stepper.setMaxSpeed(1000.0);
+  stepper.setSpeed(0);
+  Serial.println("[INIT] Stepper motor (28BYJ-48 + ULN2003) configured");
+
+  // --- DHT sensor setup ---
+  dht.begin();
+  Serial.println("[INIT] DHT sensor initialized on GPIO4");
+  Serial.println("[INIT] Starting in MANUAL fan mode (auto-control OFF by default)");
+
+  // --- Wi-Fi connection ---
+  connectWiFi();
+
+  // --- Blynk connection ---
+  Serial.println("[BLYNK] Connecting to Blynk Cloud...");
+  Blynk.config(auth);
+  bool blynkOK = Blynk.connect(5000); // 5 second timeout
+  if (blynkOK) {
+    Serial.println("[BLYNK] Connected to Blynk Cloud successfully!");
+  } else {
+    Serial.println("[BLYNK] WARNING: Could not connect to Blynk Cloud.");
+    Serial.println("[BLYNK] Will keep retrying in background via Blynk.run()");
+  }
+
+  // --- Web server setup ---
+  setupServerRoutes();
+  server.begin();
+  Serial.println("[SERVER] HTTP Web Server started on port 80");
+  Serial.print("[SERVER] Access dashboard API at: http://");
+  Serial.println(WiFi.localIP());
+
+  Serial.println("=================================================");
+  Serial.println(" SYSTEM READY - All modules initialized");
+  Serial.println("=================================================");
+}
+
+/*************************************************************
+ *  MAIN LOOP
+ *************************************************************/
+void loop() {
+  Blynk.run();
+  server.handleClient();
+
+  // Non-blocking continuous stepper rotation while fan is ON
+  if (fanState) {
+    stepper.runSpeed();
+  }
+
+  // Non-blocking DHT sensor polling (millis()-based, no delay())
+  readSensor();
+}
+
+/*************************************************************
+ *  WI-FI CONNECTION
+ *************************************************************/
+void connectWiFi() {
+  Serial.print("[WIFI] Connecting to SSID: ");
+  Serial.println(ssid);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, pass);
+
+  int attempts = 0;
+  while (WiFi.status() != WL_CONNECTED && attempts < 40) {
+    delay(500);
+    Serial.print(".");
+    attempts++;
+  }
+  Serial.println();
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("[WIFI] Wi-Fi Connected Successfully!");
+    Serial.print("[WIFI] IP Address: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("[WIFI] Signal Strength (RSSI): ");
+    Serial.print(WiFi.RSSI());
+    Serial.println(" dBm");
+  } else {
+    Serial.println("[WIFI] ERROR: Failed to connect to Wi-Fi after multiple attempts.");
+    Serial.println("[WIFI] Please check SSID/Password and restart the device.");
+  }
+}
+
+/*************************************************************
+ *  WEB SERVER ROUTES
+ *************************************************************/
+void setupServerRoutes() {
+  server.on("/red/on",    HTTP_GET, handleRedOn);
+  server.on("/red/off",   HTTP_GET, handleRedOff);
+  server.on("/green/on",  HTTP_GET, handleGreenOn);
+  server.on("/green/off", HTTP_GET, handleGreenOff);
+  server.on("/blue/on",   HTTP_GET, handleBlueOn);
+  server.on("/blue/off",  HTTP_GET, handleBlueOff);
+  server.on("/fan/on",    HTTP_GET, handleFanOn);
+  server.on("/fan/off",   HTTP_GET, handleFanOff);
+  server.on("/mode/auto",   HTTP_GET, handleModeAuto);    // NEW
+  server.on("/mode/manual", HTTP_GET, handleModeManual);  // NEW
+  server.on("/status",    HTTP_GET, handleStatus);
+  server.on("/sensor",    HTTP_GET, handleSensor);
+
+  // Enable CORS for all responses so the website (served from
+  // Live Server / GitHub Pages / local file) can call the ESP32 API
+  server.enableCORS(true);
+
+  server.onNotFound(handleNotFound);
+
+  Serial.println("[SERVER] Routes registered:");
+  Serial.println("         GET /red/on    GET /red/off");
+  Serial.println("         GET /green/on  GET /green/off");
+  Serial.println("         GET /blue/on   GET /blue/off");
+  Serial.println("         GET /fan/on    GET /fan/off   (forces MANUAL mode)");
+  Serial.println("         GET /mode/auto   GET /mode/manual");
+  Serial.println("         GET /status");
+  Serial.println("         GET /sensor");
+}
+
+/*************************************************************
+ *  ROUTE HANDLERS
+ *************************************************************/
+void handleRedOn() {
+  Serial.println("[WEB] Website Request Received: /red/on");
+  applyRed(true);
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+void handleRedOff() {
+  Serial.println("[WEB] Website Request Received: /red/off");
+  applyRed(false);
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+void handleGreenOn() {
+  Serial.println("[WEB] Website Request Received: /green/on");
+  applyGreen(true);
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+void handleGreenOff() {
+  Serial.println("[WEB] Website Request Received: /green/off");
+  applyGreen(false);
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+void handleBlueOn() {
+  Serial.println("[WEB] Website Request Received: /blue/on");
+  applyBlue(true);
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+void handleBlueOff() {
+  Serial.println("[WEB] Website Request Received: /blue/off");
+  applyBlue(false);
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+void handleFanOn() {
+  Serial.println("[WEB] Website Request Received: /fan/on (manual)");
+  autoModeEnabled = false;   // FIX: manual command always wins, DHT can't override it
+  applyFan(true);
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+void handleFanOff() {
+  Serial.println("[WEB] Website Request Received: /fan/off (manual)");
+  autoModeEnabled = false;   // FIX: manual command always wins, DHT can't override it
+  applyFan(false);
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+// NEW: re-enable DHT-based automatic fan control
+void handleModeAuto() {
+  Serial.println("[WEB] Website Request Received: /mode/auto");
+  autoModeEnabled = true;
+  Serial.println("[MODE] Switched to AUTO - DHT readings will now control the fan");
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+// NEW: force manual mode (fan stays exactly as you last set it)
+void handleModeManual() {
+  Serial.println("[WEB] Website Request Received: /mode/manual");
+  autoModeEnabled = false;
+  Serial.println("[MODE] Switched to MANUAL - fan will only respond to on/off commands");
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+void handleStatus() {
+  server.send(200, "application/json", buildStatusJSON());
+}
+
+void handleSensor() {
+  Serial.println("[WEB] Website Request Received: /sensor");
+  server.send(200, "application/json", buildSensorJSON());
+}
+
+void handleNotFound() {
+  server.send(404, "application/json", "{\"error\":\"Endpoint not found\"}");
+  Serial.print("[WEB] 404 - Unknown request: ");
+  Serial.println(server.uri());
+}
+
+/*************************************************************
+ *  APPLY FUNCTIONS (single source of truth for hardware state)
+ *  These update the GPIO, the internal state, AND sync Blynk.
+ *************************************************************/
+void applyRed(bool state) {
+  redState = state;
+  digitalWrite(RED_PIN, state ? HIGH : LOW);
+  Blynk.virtualWrite(V0, state ? 1 : 0);
+  Serial.print("[LED] Red LED ");
+  Serial.println(state ? "ON" : "OFF");
+}
+
+void applyGreen(bool state) {
+  greenState = state;
+  digitalWrite(GREEN_PIN, state ? HIGH : LOW);
+  Blynk.virtualWrite(V2, state ? 1 : 0);
+  Serial.print("[LED] Green LED ");
+  Serial.println(state ? "ON" : "OFF");
+}
+
+void applyBlue(bool state) {
+  blueState = state;
+  digitalWrite(BLUE_PIN, state ? HIGH : LOW);
+  Blynk.virtualWrite(V3, state ? 1 : 0);
+  Serial.print("[LED] Blue LED ");
+  Serial.println(state ? "ON" : "OFF");
+}
+
+void applyFan(bool state) {
+  fanState = state;
+  if (state) {
+    stepper.setSpeed(FAN_SPEED);
+    Serial.println("[FAN] Fan Running (continuous rotation)");
+  } else {
+    stepper.setSpeed(0);
+    stepper.disableOutputs(); // cuts current to coils, prevents overheating/holding current
+    Serial.println("[FAN] Fan Stopped");
+  }
+  Blynk.virtualWrite(V1, state ? 1 : 0);
+}
+
+/*************************************************************
+ *  DHT SENSOR FUNCTIONS
+ *************************************************************/
+
+// readSensor()
+// -------------
+// Non-blocking DHT read using millis() timing (no delay() calls).
+// Runs every SENSOR_READ_INTERVAL (2000 ms) inside loop().
+// Always updates readings/Serial/Blynk V4-V5 regardless of mode,
+// so you can still monitor temperature/humidity even in manual mode.
+// Only calls autoFanControl() - i.e. only touches the fan - when
+// autoModeEnabled is true.
+void readSensor() {
+  unsigned long now = millis();
+
+  if (now - lastSensorReadTime < SENSOR_READ_INTERVAL) {
+    return;
+  }
+  lastSensorReadTime = now;
+
+  float h = dht.readHumidity();
+  float t = dht.readTemperature(); // Celsius by default
+
+  if (isnan(h) || isnan(t)) {
+    Serial.println("[DHT] WARNING: Failed to read from DHT sensor! Keeping last known values.");
+    return;
+  }
+
+  temperature = t;
+  humidity    = h;
+
+  Serial.print("[DHT] Temperature: ");
+  Serial.print(temperature, 1);
+  Serial.print(" C   Humidity: ");
+  Serial.print(humidity, 1);
+  Serial.println(" %");
+
+  Blynk.virtualWrite(V4, temperature);
+  Blynk.virtualWrite(V5, humidity);
+
+  // FIX: only let DHT drive the fan when auto mode is explicitly enabled
+  if (autoModeEnabled) {
+    autoFanControl();
+  }
+}
+
+// autoFanControl()
+// ------------------
+// Automatically turns the fan ON when temperature > 30°C OR humidity > 60%,
+// and OFF once BOTH temperature < 30°C AND humidity < 60%.
+// This function is now ONLY ever called while autoModeEnabled == true
+// (see readSensor()), so it can never fight a manual on/off command -
+// a manual command always sets autoModeEnabled = false first.
+void autoFanControl() {
+  bool shouldTurnOn  = (temperature > AUTO_TEMP_ON_THRESHOLD) ||
+                       (humidity    > AUTO_HUM_ON_THRESHOLD);
+  bool shouldTurnOff = (temperature < AUTO_TEMP_OFF_THRESHOLD) &&
+                       (humidity    < AUTO_HUM_OFF_THRESHOLD);
+
+  if (shouldTurnOn && !fanState) {
+    Serial.println("[AUTO] Threshold exceeded (temp/humidity) - turning fan ON automatically");
+    applyFan(true);
+  } else if (shouldTurnOff && fanState) {
+    Serial.println("[AUTO] Readings normalized - turning fan OFF automatically");
+    applyFan(false);
+  }
+}
+
+// buildSensorJSON()
+String buildSensorJSON() {
+  String json = "{";
+  json += "\"temperature\":" + String(isnan(temperature) ? 0.0 : temperature, 1) + ",";
+  json += "\"humidity\":" + String(isnan(humidity) ? 0.0 : humidity, 1);
+  json += "}";
+  return json;
+}
+
+/*************************************************************
+ *  JSON STATUS BUILDER
+ *************************************************************/
+String buildStatusJSON() {
+  String json = "{";
+  json += "\"red\":" + String(redState ? "true" : "false") + ",";
+  json += "\"green\":" + String(greenState ? "true" : "false") + ",";
+  json += "\"blue\":" + String(blueState ? "true" : "false") + ",";
+  json += "\"fan\":" + String(fanState ? "true" : "false") + ",";
+  json += "\"autoMode\":" + String(autoModeEnabled ? "true" : "false") + ","; // NEW
+  json += "\"temperature\":" + String(isnan(temperature) ? 0.0 : temperature, 1) + ",";
+  json += "\"humidity\":" + String(isnan(humidity) ? 0.0 : humidity, 1) + ",";
+  json += "\"ip\":\"" + WiFi.localIP().toString() + "\",";
+  json += "\"rssi\":" + String(WiFi.RSSI());
+  json += "}";
+  return json;
+}
+
+/*************************************************************
+ *  BLYNK VIRTUAL PIN HANDLERS (App -> ESP32)
+ *************************************************************/
+BLYNK_WRITE(V0) {  // Red LED switch from Blynk app
+  int value = param.asInt();
+  Serial.println("[BLYNK] Command Received: Red LED");
+  digitalWrite(RED_PIN, value ? HIGH : LOW);
+  redState = value;
+  Serial.print("[LED] Red LED ");
+  Serial.println(value ? "ON" : "OFF");
+}
+
+BLYNK_WRITE(V1) {  // Fan switch from Blynk app
+  int value = param.asInt();
+  Serial.println("[BLYNK] Command Received: Fan (manual)");
+  autoModeEnabled = false;  // FIX: manual app toggle always wins over DHT
+  applyFan(value == 1);
+}
+
+BLYNK_WRITE(V2) {  // Green LED switch from Blynk app
+  int value = param.asInt();
+  Serial.println("[BLYNK] Command Received: Green LED");
+  digitalWrite(GREEN_PIN, value ? HIGH : LOW);
+  greenState = value;
+  Serial.print("[LED] Green LED ");
+  Serial.println(value ? "ON" : "OFF");
+}
+
+BLYNK_WRITE(V3) {  // Blue LED switch from Blynk app
+  int value = param.asInt();
+  Serial.println("[BLYNK] Command Received: Blue LED");
+  digitalWrite(BLUE_PIN, value ? HIGH : LOW);
+  blueState = value;
+  Serial.print("[LED] Blue LED ");
+  Serial.println(value ? "ON" : "OFF");
+}
+
+// NEW: dedicated Blynk switch (V6) to toggle auto/manual fan mode from the app.
+// Add a Switch widget on V6 in your Blynk template if you want this control there.
+BLYNK_WRITE(V6) {
+  int value = param.asInt();
+  autoModeEnabled = (value == 1);
+  Serial.print("[BLYNK] Fan mode set to: ");
+  Serial.println(autoModeEnabled ? "AUTO" : "MANUAL");
+}
+
+/*************************************************************
+ *  BLYNK CONNECTION EVENT
+ *************************************************************/
+BLYNK_CONNECTED() {
+  Serial.println("[BLYNK] Device connected — syncing current state to app...");
+  Blynk.virtualWrite(V0, redState ? 1 : 0);
+  Blynk.virtualWrite(V1, fanState ? 1 : 0);
+  Blynk.virtualWrite(V2, greenState ? 1 : 0);
+  Blynk.virtualWrite(V3, blueState ? 1 : 0);
+  Blynk.virtualWrite(V6, autoModeEnabled ? 1 : 0); // NEW
+  if (!isnan(temperature)) Blynk.virtualWrite(V4, temperature);
+  if (!isnan(humidity))    Blynk.virtualWrite(V5, humidity);
+}
+          </code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="details">
+      <div class="panel glass">
+        <div class="card__header">
+          <i class="fa-solid fa-circle-info card__icon"></i>
+          <h2>Project Details</h2>
+        </div>
+        <div class="details-grid">
+          <button class="detail-item" type="button" data-detail-target="objective">
+            <div class="detail-item__header">
+              <h3>Objective</h3>
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+            <div class="detail-item__content" id="objective">
+              <p>Create a smart home automation system that combines voice commands, responsive web control, and
+                real-time environmental monitoring.</p>
+            </div>
+          </button>
+          <button class="detail-item" type="button" data-detail-target="components">
+            <div class="detail-item__header">
+              <h3>Components</h3>
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+            <div class="detail-item__content" id="components">
+              <p>ESP32 microcontroller, DHT11 sensor, RGB LED strip, ventilation fan, and a modern web dashboard.</p>
+            </div>
+          </button>
+          <button class="detail-item" type="button" data-detail-target="features">
+            <div class="detail-item__header">
+              <h3>Features</h3>
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+            <div class="detail-item__content" id="features">
+              <p>Live sensor gauges, device toggles, voice recognition, and direct ESP32 endpoint integration through
+                Wi-Fi.</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer glass">
+      <p class="footer__line">
+        Developed by <strong>[Biswajit Biswal]</strong>
+      </p>
+      <!-- <p class="footer__line footer__college">[Your College Name]</p> -->
+      <p class="footer__version">Home Automation System • Version 2.0</p>
+    </footer>
+
+  </div>
+
+  <!-- ============== SMART HOME AI ASSISTANT ============== -->
+  <div class="ai-float-btn-container">
+    <button class="ai-float-btn" id="aiFloatBtn" type="button" aria-label="Smart Home AI" title="Smart Home AI">
+      <i class="fa-solid fa-robot"></i>
+      <span class="ai-float-btn__tooltip">Smart Home AI</span>
+    </button>
+  </div>
+
+  <div class="ai-chat-window" id="aiChatWindow" aria-hidden="true">
+    <header class="ai-chat-header">
+      <div class="ai-chat-header__brand">
+        <div class="ai-avatar">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div class="ai-chat-header__title-area">
+          <h3>Smart Home AI Assistant</h3>
+          <span>Home Automation Information Assistant</span>
+        </div>
+      </div>
+      <div class="ai-chat-header__actions">
+        <button class="ai-header-btn" id="aiMinimizeBtn" title="Minimize" aria-label="Minimize">
+          <i class="fa-solid fa-minus"></i>
+        </button>
+        <button class="ai-header-btn" id="aiMaximizeBtn" title="Maximize" aria-label="Maximize">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+        <button class="ai-header-btn ai-header-btn--close" id="aiCloseBtn" title="Close" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="ai-chat-body" id="aiChatBody">
+      <!-- Welcome Screen / Empty Chat State -->
+      <div class="ai-welcome-container" id="aiWelcomeScreen">
+        <div class="ai-welcome-avatar">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <h4>Hello 👋</h4>
+        <div class="ai-welcome-text">
+          <p>I'm your Smart Home AI Assistant.</p>
+          <p>I can help you understand your Home Automation Project, explain components, analyze live sensor
+            information, and answer technical questions.</p>
+        </div>
+
+        <span class="ai-suggestions-title">Suggested Questions</span>
+        <div class="ai-suggestions-grid">
+          <button class="ai-suggestion-card" type="button" data-question="Current Temperature">🌡 Temperature</button>
+          <button class="ai-suggestion-card" type="button" data-question="Current Humidity">💧 Humidity</button>
+          <button class="ai-suggestion-card" type="button" data-question="Wi-Fi Status">📶 Wi-Fi Status</button>
+          <button class="ai-suggestion-card" type="button" data-question="System Health">⚙ System Health</button>
+          <button class="ai-suggestion-card" type="button" data-question="Explain ESP32">📖 Explain ESP32</button>
+          <button class="ai-suggestion-card" type="button" data-question="Explain DHT11">📘 Explain DHT11</button>
+          <button class="ai-suggestion-card" type="button" data-question="Explain Circuit">🔌 Explain Circuit</button>
+          <button class="ai-suggestion-card" type="button" data-question="Explain Project">🏠 Explain Project</button>
+          <button class="ai-suggestion-card" type="button" data-question="Working Principle">🧠 Working
+            Principle</button>
+          <button class="ai-suggestion-card" type="button" data-question="Analyze Room">📊 Analyze Room</button>
+          <button class="ai-suggestion-card" type="button" data-question="Recommendations">💡 Recommendations</button>
+          <button class="ai-suggestion-card" type="button" data-question="Help">❓ Help</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-chat-input-area" id="aiChatInputArea">
+      <div class="ai-chat-input-wrapper">
+        <input type="text" class="ai-chat-input" id="aiChatInput"
+          placeholder="Ask anything about your Home Automation Project..."
+          aria-label="Ask anything about your Home Automation Project" />
+        <div class="ai-input-actions">
+          <button class="ai-input-btn" id="aiAttachBtn" title="Attach file" type="button" aria-label="Attach file">
+            <i class="fa-solid fa-paperclip"></i>
+          </button>
+          <button class="ai-input-btn" id="aiMicBtn" title="Voice input" type="button" aria-label="Voice input">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <button class="ai-input-btn ai-input-btn--send" id="aiSendBtn" title="Send message" type="button"
+            aria-label="Send message">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+      <div class="ai-input-footer-hint">
+        <span onclick="window.clearAiChat()">Reset Conversation</span>
+        <span>Secure connection</span>
+      </div>
+    </div>
+  </div>
+  <!-- ============== /SMART HOME AI ASSISTANT ============== -->
+
+  <script src="script.js"></script>
+  <script src="ai-assistant.js"></script>
+ 
+</body>
+
+</html>
