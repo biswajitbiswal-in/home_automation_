@@ -98,6 +98,9 @@ Unlike traditional voice assistants, Aero AI is designed as a **project knowledg
 # 📂 Project Structure
 
 
+## 📂 Project Structure
+
+```text
 Home-Automation/
 │
 ├── index.html
@@ -115,7 +118,6 @@ Home-Automation/
 └── diagram/
     └── diagram_pic.png
 ```
-
 ---
 
 # 🏗️ System Architecture
