@@ -806,7 +806,7 @@ void readSensor() {
 // autoFanControl()
 // ------------------
 // Automatically turns the fan ON when temperature > 30°C OR humidity > 60%,
-// and OFF once BOTH values drop back below the same threshold.
+// and OFF once BOTH temperature < 30°C AND humidity < 60%.
 // This function is now ONLY ever called while autoModeEnabled == true
 // (see readSensor()), so it can never fight a manual on/off command -
 // a manual command always sets autoModeEnabled = false first.
@@ -1057,7 +1057,8 @@ BLYNK_CONNECTED() {
   <!-- ============== /SMART HOME AI ASSISTANT ============== -->
 
   <script src="js/script.js"></script>
-  <script src="js/ai-assistant.js"></script>
+  <script src="js/ai_assistant.js"></script>
+ 
 </body>
 
 </html>

@@ -41,14 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
     redToggleBtn: document.getElementById("redToggleBtn"),
     greenToggleBtn: document.getElementById("greenToggleBtn"),
     blueToggleBtn: document.getElementById("blueToggleBtn"),
-    brightnessSlider: document.getElementById("brightnessSlider"),
-    brightnessValue: document.getElementById("brightnessValue"),
 
     fanSvg: document.getElementById("fanSvg"),
     fanBlades: document.getElementById("fanBlades"),
     fanStatus: document.getElementById("fanStatus"),
-    fanSpeedSlider: document.getElementById("fanSpeedSlider"),
-    fanSpeedValue: document.getElementById("fanSpeedValue"),
     fanOnBtn: document.getElementById("fanOnBtn"),
     fanOffBtn: document.getElementById("fanOffBtn"),
 
@@ -364,7 +360,6 @@ document.addEventListener("DOMContentLoaded", () => {
     red: false,
     green: false,
     blue: false,
-    brightness: 80,
   };
 
   function currentLedColor() {
@@ -378,7 +373,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const isOn = led.red || led.green || led.blue;
     const color = currentLedColor();
     el.ledOrb.style.setProperty("--led-color", color);
-    el.ledOrb.style.filter = `brightness(${0.5 + led.brightness / 100})`;
     el.ledOrb.classList.toggle("is-on", isOn);
     el.colorValue.textContent = color.toUpperCase();
     el.ledStateLabel.textContent = isOn ? "LED is ON" : "LED is OFF";
@@ -387,7 +381,6 @@ document.addEventListener("DOMContentLoaded", () => {
     el.greenToggleBtn.dataset.on = String(led.green);
     el.blueToggleBtn.dataset.on = String(led.blue);
 
-    updateDeviceCount(0); // keep in sync, recompute below
     el.chipDevices.textContent = `${(isOn ? 1 : 0) + (fan.isOn ? 1 : 0) + 1} / 3`;
   }
 
@@ -398,12 +391,6 @@ document.addEventListener("DOMContentLoaded", () => {
         /* board offline — UI state remains authoritative */
       });
     });
-
-    if (channel === "brightness") {
-      fetch(`${ESP32_IP}/brightness/${led.brightness}`).catch(() => {
-        /* board offline — UI state remains authoritative */
-      });
-    }
   }
 
   function toggleChannel(channel, iconClass) {
@@ -438,30 +425,14 @@ document.addEventListener("DOMContentLoaded", () => {
   el.ledOnBtn.addEventListener("click", () => window.ledOn());
   el.ledOffBtn.addEventListener("click", () => window.ledOff());
 
-  el.brightnessSlider.addEventListener("input", (e) => {
-    led.brightness = Number(e.target.value);
-    el.brightnessValue.textContent = `${led.brightness}%`;
-    refreshLedUI();
-  });
-  el.brightnessSlider.addEventListener("change", (e) => {
-    sendLedCommandStub("brightness");
-    addLogEntry(`Brightness set to ${e.target.value}%`, "fa-solid fa-sun");
-  });
-
   /* ===================================================================
      6. FAN / VENTILATION CARD (stepper motor via ULN2003)
      =================================================================== */
-  const fan = { isOn: false, speed: 0 };
+  const fan = { isOn: false };
 
   function refreshFanUI() {
-    el.fanSpeedValue.textContent = `${fan.speed}%`;
     el.fanStatus.textContent = fan.isOn ? "Running" : "Idle";
-    el.fanBlades.classList.toggle("is-spinning", fan.isOn && fan.speed > 0);
-    if (fan.isOn && fan.speed > 0) {
-      // Map 0–100% speed to a 3s (slow) – 0.4s (fast) rotation duration.
-      const duration = 3 - (fan.speed / 100) * 2.6;
-      el.fanBlades.style.animationDuration = `${duration.toFixed(2)}s`;
-    }
+    el.fanBlades.classList.toggle("is-spinning", fan.isOn);
     el.chipDevices.textContent = `${(led.red || led.green || led.blue ? 1 : 0) + (fan.isOn ? 1 : 0) + 1} / 3`;
   }
 
@@ -469,20 +440,10 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch(`${ESP32_IP}/fan/${fan.isOn ? "on" : "off"}`).catch(() => {
       /* board offline — UI state remains authoritative */
     });
-
-    if (fan.speed > 0) {
-      fetch(`${ESP32_IP}/speed/${fan.speed}`).catch(() => {
-        /* board offline — UI state remains authoritative */
-      });
-    }
   }
 
   window.fanOn = () => {
     fan.isOn = true;
-    if (fan.speed === 0) {
-      fan.speed = 60;
-      el.fanSpeedSlider.value = 60;
-    }
     refreshFanUI();
     sendFanCommandStub();
     addLogEntry("Fan turned ON", "fa-solid fa-fan");
@@ -497,16 +458,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   el.fanOnBtn.addEventListener("click", () => window.fanOn());
   el.fanOffBtn.addEventListener("click", () => window.fanOff());
-
-  el.fanSpeedSlider.addEventListener("input", (e) => {
-    fan.speed = Number(e.target.value);
-    fan.isOn = fan.speed > 0;
-    refreshFanUI();
-  });
-  el.fanSpeedSlider.addEventListener("change", () => {
-    sendFanCommandStub();
-    addLogEntry(`Fan speed set to ${fan.speed}%`, "fa-solid fa-gauge-high");
-  });
 
   refreshLedUI();
   refreshFanUI();

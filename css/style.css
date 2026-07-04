@@ -895,44 +895,6 @@ code {
 
 .led-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-.control-row { display: flex; flex-direction: column; gap: 8px; }
-
-.control-row label {
-  font-size: 0.78rem; color: var(--text-muted);
-  display: flex; justify-content: space-between;
-  font-family: var(--font-mono);
-}
-
-.control-row__value { font-family: var(--font-mono); color: var(--accent-teal); font-weight: 600; }
-
-input[type="range"] {
-  -webkit-appearance: none; appearance: none;
-  width: 100%; height: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  outline: none;
-  transition: box-shadow var(--transition-fast);
-}
-input[type="range"]:hover { box-shadow: inset 0 0 0 1px rgba(255, 176, 32, 0.25); }
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 19px; height: 19px;
-  border-radius: 50%;
-  background: var(--accent-gradient);
-  border: 2px solid #100b03;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 176, 32, 0.55);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.18); box-shadow: 0 0 16px rgba(255, 176, 32, 0.75); }
-input[type="range"]::-moz-range-thumb {
-  width: 19px; height: 19px; border-radius: 50%;
-  background: var(--accent-gradient);
-  border: 2px solid #100b03;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 176, 32, 0.55);
-}
-
 /* ===================================================================
    9. BUTTONS
    =================================================================== */
@@ -1023,7 +985,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .fan-blades.is-spinning {
-  animation: fan-spin linear infinite;
+  animation: fan-spin 1.2s linear infinite;
 }
 
 @keyframes fan-spin {
