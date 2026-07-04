@@ -248,13 +248,6 @@
               <i class="fa-solid fa-power-off"></i> All Off
             </button>
           </div>
-
-          <div class="control-row">
-            <label for="brightnessSlider">
-              Brightness <span class="control-row__value" id="brightnessValue">80%</span>
-            </label>
-            <input type="range" id="brightnessSlider" min="0" max="100" value="80" />
-          </div>
         </section>
 
         <!-- FAN / VENTILATION CONTROL CARD (replaces door) -->
@@ -276,13 +269,6 @@
               <circle cx="80" cy="80" r="10" class="fan-hub" />
             </svg>
             <span class="fan-status" id="fanStatus">Idle</span>
-          </div>
-
-          <div class="control-row">
-            <label for="fanSpeedSlider">
-              Fan Speed <span class="control-row__value" id="fanSpeedValue">0%</span>
-            </label>
-            <input type="range" id="fanSpeedSlider" min="0" max="100" value="0" />
           </div>
 
           <div class="fan-buttons">
@@ -820,7 +806,7 @@ void readSensor() {
 // autoFanControl()
 // ------------------
 // Automatically turns the fan ON when temperature > 30°C OR humidity > 60%,
-// and OFF once BOTH temperature < 30°C AND humidity < 60%.
+// and OFF once BOTH values drop back below the same threshold.
 // This function is now ONLY ever called while autoModeEnabled == true
 // (see readSensor()), so it can never fight a manual on/off command -
 // a manual command always sets autoModeEnabled = false first.
@@ -1072,7 +1058,6 @@ BLYNK_CONNECTED() {
 
   <script src="script.js"></script>
   <script src="ai-assistant.js"></script>
- 
 </body>
 
 </html>
