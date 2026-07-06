@@ -709,7 +709,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
-const ESP32_IP = (window.ESP32_IP || "http://10.98.183.133").replace(/\/$/, "");
+const ESP32_IP = (window.ESP32_IP || " http://10.151.162.133").replace(/\/$/, "");
 
 function copyCode() {
   const code = document.getElementById("espCodeBlock")?.textContent || "";
