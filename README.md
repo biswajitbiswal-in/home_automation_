@@ -242,7 +242,7 @@ Open **index.html** in your browser or use the **Live Server** extension in Visu
 
 ## Hardware Setup
 <p align="center">
-  <img src="diagram/hardware.png" width="900">
+  <img src="diagram/hardware.png" width="600">
 </p>
 
 > Add a photo of your hardware setup here.
