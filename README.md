@@ -225,8 +225,6 @@ Open **index.html** in your browser or use the **Live Server** extension in Visu
 
 # 📷 Project Images
 
-## Dashboard
-
 ## 📷 Dashboard
 
 <p align="center">
