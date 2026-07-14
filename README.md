@@ -162,10 +162,10 @@ git clone https://github.com/biswajitbiswal-in/Home-Automation.git
 
 ---
 
-## 🔮 Future Enhancements
 
-<<<<<<< HEAD
-🎙️ Voice commands · ☁️ Cloud database · 📊 Data logging · 📱 Android app · 🌍 Remote internet access · 🔔 Smart notifications · 📈 Energy monitoring · 🔐 User authentication
+🔮 Future Enhancements
+
+🎙️ Voice commands · ☁️ Cloud database · 📊 Data logging · 📱 Android app · 🌍 Remote internet access · 🔔 Smart notifications · 📈 Energy monitoring · 🔐 User authentication · 🗣️ Voice authentication (security) · 😊 Face authentication (security)
 =======
 ## 📷 Dashboard
 
