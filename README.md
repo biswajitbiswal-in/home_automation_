@@ -1,102 +1,112 @@
 # 🏠 Home Automation Through Voice Commands
 
-> A modern IoT-based Home Automation System built using **ESP32**, **HTML**, **CSS**, and **JavaScript**. The system enables real-time monitoring and control of home appliances through a responsive web dashboard using REST API communication over a local Wi-Fi network.
+A smart home automation system built with **ESP32 + HTML + CSS + JavaScript**. Control lights and a fan, and monitor temperature/humidity, from a web dashboard on your local Wi-Fi network — no app install needed.
 
 ---
 
-# 📖 Overview
+## 🧠 What This Project Does (30-Second Summary)
 
-This project is a smart home automation system that enables users to monitor and control household appliances using an **ESP32 microcontroller** and a **custom web dashboard**. The ESP32 hosts an HTTP web server that exposes REST API endpoints, allowing seamless communication between the dashboard and the hardware.
+1. An **ESP32 board** is wired to RGB LEDs, a stepper motor (fan), and a DHT11 sensor.
+2. The ESP32 runs a tiny **web server** and exposes simple REST API endpoints like `/red/on` or `/fan/off`.
+3. A **web dashboard** (just HTML/CSS/JS, open in any browser) talks to the ESP32 over Wi-Fi using those endpoints.
+4. The dashboard shows live LED status, fan status, temperature, humidity, Wi-Fi signal, and mode — updating in real time.
+5. You can control everything manually, or flip to **Auto Mode**, where the fan turns on/off by itself based on temperature and humidity thresholds.
+6. A built-in chat assistant, **Aero AI**, explains how the project works if you have questions — it doesn't control hardware, it's just a guide.
 
-The system provides real-time control of RGB LEDs and a stepper motor fan while continuously monitoring temperature and humidity using a DHT11 sensor. It supports both **Manual Mode** and **Auto Mode**, making the system reliable, efficient, and user-friendly.
+That's the whole system: **browser dashboard ⇄ Wi-Fi ⇄ ESP32 ⇄ sensors/actuators.**
 
 ---
 
-# ✨ Features
+## 🏗️ How It Works (Flow)
 
-- 🌐 ESP32 HTTP Web Server
-- 📡 REST API Communication
-- 💡 RGB LED Control
-- 🌀 Stepper Motor Fan Control
-- 🌡️ Real-Time Temperature Monitoring
-- 💧 Real-Time Humidity Monitoring
-- ⚙️ Manual & Auto Fan Mode
-- 📶 Wi-Fi Signal Monitoring
-- 📱 Responsive Web Dashboard
-- 🎨 Modern User Interface
-- ⚡ Live Device Status Updates
-- 🔄 Real-Time Dashboard Synchronization
-- 🏠 Local Wi-Fi Network Communication
+```text
+        You (Browser)
+              │
+              ▼
+     Web Dashboard (HTML/CSS/JS)
+              │
+     sends HTTP requests (REST API)
+              │
+              ▼
+      ESP32 Web Server
+    ┌─────────┼──────────┐
+    ▼         ▼          ▼
+RGB LEDs   Fan Motor   DHT11 Sensor
+    │         │          │
+    └─────────┼──────────┘
+              │
+   ESP32 replies with JSON
+   (status, temp, humidity, mode)
+              │
+              ▼
+   Dashboard updates instantly
+```
 
+**Step by step:**
+1. ESP32 connects to your Wi-Fi and starts a web server.
+2. Dashboard sends a request (e.g. "turn fan on").
+3. ESP32 controls the hardware and reads the DHT11 sensor.
+4. ESP32 sends back current status as JSON.
+5. Dashboard refreshes automatically — no page reload needed.
+6. In **Auto Mode**, the ESP32 decides fan on/off by itself using temperature/humidity thresholds. In **Manual Mode**, you decide.
 
-
-
-# 🤖 Aero AI Assistant
-
-**Aero AI** is the intelligent virtual assistant integrated into the Home Automation dashboard. It provides users with instant information about the project, system features, and connected devices through an interactive chat interface.
-
-Unlike traditional voice assistants, Aero AI is designed as a **project knowledge assistant**. It helps users understand how the system works without directly controlling the hardware.
+---
 
 ## ✨ Features
 
-- 💬 Interactive chat interface
-- 📖 Explains project features and functionality
-- 🌡️ Provides information about temperature and humidity monitoring
-- 💡 Describes RGB LED and fan control operations
-- 📡 Explains REST API communication
-- ⚙️ Answers questions about Auto and Manual modes
-- 📚 Helps users understand the system architecture
-- 🎨 Integrated seamlessly into the dashboard
-
-## 🧠 What Aero AI Can Answer
-
-- What is this project?
-- How does the ESP32 work?
-- How does the REST API communicate with the dashboard?
-- What is the purpose of the DHT11 sensor?
-- How does Auto Mode work?
-- How does Manual Mode work?
-- What hardware components are used?
-- How is the web dashboard connected to the ESP32?
-- How does the system monitor temperature and humidity?
-
-> **Note:** Aero AI is an informational assistant designed to explain the project and its features. It does **not** directly control devices or execute hardware commands.
+- 🌐 ESP32 hosts its own web server (no cloud, no app)
+- 💡 Control 3 RGB LEDs individually
+- 🌀 Control a stepper-motor fan
+- 🌡️ Live temperature & humidity readout (DHT11)
+- ⚙️ Manual mode (you control) or Auto mode (system decides)
+- 📶 Live Wi-Fi signal strength
+- 📱 Responsive dashboard — works on phone or desktop
+- 🤖 Aero AI chat assistant explains the project on request
 
 ---
 
-# 🛠 Hardware Components
+## 🤖 Aero AI Assistant
 
-| Component | Quantity |
-|-----------|----------|
+A chat widget on the dashboard that answers questions about the project itself — e.g. *"How does Auto Mode work?"* or *"What sensor is used?"* It's informational only and does not send hardware commands.
+
+---
+
+## 🛠 Hardware Used
+
+| Component | Qty |
+|---|---|
 | ESP32 Dev Board | 1 |
 | DHT11 Temperature & Humidity Sensor | 1 |
 | 28BYJ-48 Stepper Motor | 1 |
 | ULN2003 Driver Module | 1 |
-| Red LED | 1 |
-| Green LED | 1 |
-| Blue LED | 1 |
+| Red / Green / Blue LEDs | 1 each |
 | 220Ω Resistors | 3 |
-| Breadboard | 1 |
-| Jumper Wires | As Required |
+| Breadboard + Jumper Wires | As needed |
 
 ---
 
-# 💻 Software & Technologies
+## 💻 Software & Tech Stack
 
-- Arduino IDE
-- HTML5
-- CSS3
-- JavaScript (ES6)
-- ESP32 Arduino Core
-- REST API
-- VS Code
-- Git
-- GitHub
+Arduino IDE · HTML5 · CSS3 · JavaScript (ES6) · ESP32 Arduino Core · REST API · VS Code · Git/GitHub
+
+**Required Arduino libraries:** `WiFi.h`, `WebServer.h`, `DHT.h`, `Adafruit_Sensor.h`, `AccelStepper.h`
 
 ---
 
-# 📂 Project Structure
+## 🌐 REST API Endpoints
 
+| Endpoint | Method | What It Does |
+|---|---|---|
+| `/status` | GET | Full system status |
+| `/sensor` | GET | Temperature + humidity |
+| `/red/on` `/red/off` | GET | Red LED on/off |
+| `/green/on` `/green/off` | GET | Green LED on/off |
+| `/blue/on` `/blue/off` | GET | Blue LED on/off |
+| `/fan/on` `/fan/off` | GET | Fan on/off |
+| `/mode/auto` | GET | Switch to Auto Mode |
+| `/mode/manual` | GET | Switch to Manual Mode |
+
+---
 
 ## 📂 Project Structure
 
@@ -118,169 +128,56 @@ Home-Automation/
 └── diagram/
     └── diagram_pic.png
 ```
----
-
-# 🏗️ System Architecture
-
-
-                    User
-                      │
-                      ▼
-          Web Dashboard (HTML/CSS/JS)
-                      │
-          HTTP REST API Requests
-                      │
-                      ▼
-            ESP32 HTTP Web Server
-        ┌───────────┼────────────┐
-        ▼           ▼            ▼
-    RGB LEDs   Stepper Motor   DHT11
-        │           │            │
-        └───────────┼────────────┘
-                    │
-          Reads Device & Sensor Data
-                    │
-            JSON Response (/status)
-                    │
-                    ▼
-        Dashboard Updates in Real Time
-```
-     ┌───────────────────────────────────────────────┐
-     │ • LED Status (ON/OFF)                         │
-     │ • Fan Status                                  │
-     │ • Temperature                                │
-     │ • Humidity                                   │
-     │ • Auto / Manual Mode                         │
-     │ • Wi-Fi Signal (RSSI)                        │
-     │ • ESP32 IP Address                           │
-     └───────────────────────────────────────────────┘
-```
 
 ---
 
-# ⚙️ Working Principle
+## 🚀 Getting Started
 
-1. The ESP32 connects to the local Wi-Fi network.
-2. The ESP32 starts an HTTP Web Server.
-3. The web dashboard sends HTTP GET requests to the ESP32 using REST API endpoints.
-4. The ESP32 processes each request and controls the connected hardware.
-5. The DHT11 sensor continuously measures temperature and humidity.
-6. The ESP32 sends the latest sensor readings and device status as JSON responses.
-7. The dashboard automatically updates to display LED status, fan status, temperature, humidity, Wi-Fi information, and operating mode.
-8. In **Auto Mode**, the fan operates automatically based on predefined temperature and humidity thresholds.
-9. In **Manual Mode**, users can directly control the fan from the dashboard.
-
----
-
-# 🌐 REST API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/status` | GET | Returns complete system status |
-| `/sensor` | GET | Returns temperature and humidity |
-| `/red/on` | GET | Turn ON Red LED |
-| `/red/off` | GET | Turn OFF Red LED |
-| `/green/on` | GET | Turn ON Green LED |
-| `/green/off` | GET | Turn OFF Green LED |
-| `/blue/on` | GET | Turn ON Blue LED |
-| `/blue/off` | GET | Turn OFF Blue LED |
-| `/fan/on` | GET | Turn ON Fan |
-| `/fan/off` | GET | Turn OFF Fan |
-| `/mode/auto` | GET | Enable Auto Mode |
-| `/mode/manual` | GET | Enable Manual Mode |
-
----
-
-# 🚀 Getting Started
-
-## Clone the Repository
-
+**1. Clone the repo**
 ```bash
 git clone https://github.com/biswajitbiswal-in/Home-Automation.git
 ```
 
-## Upload ESP32 Code
+**2. Flash the ESP32**
+- Open Arduino IDE → install the ESP32 board package.
+- Install the required libraries listed above.
+- Update your Wi-Fi SSID/password in the code.
+- Upload to the ESP32.
 
-1. Open Arduino IDE.
-2. Install the ESP32 Board Package.
-3. Install the required Arduino libraries.
-4. Update your Wi-Fi credentials.
-5. Upload the code to the ESP32.
-
-## Run the Website
-
-Open **index.html** in your browser or use the **Live Server** extension in Visual Studio Code.
+**3. Open the dashboard**
+- Open `index.html` in a browser, or run it via VS Code's Live Server extension.
 
 ---
 
-# 📚 Required Arduino Libraries
+## 📷 Project Images
 
-- WiFi.h
-- WebServer.h
-- DHT.h
-- Adafruit_Sensor.h
-- AccelStepper.h
+**Dashboard**
+<p align="center"><img src="diagram/dashboard.png" width="900"></p>
 
----
+**Circuit Diagram**
+<p align="center"><img src="diagram/diagram_pic.png" width="700"></p>
 
-# 📷 Project Images
-
-## Dashboard
-
-## 📷 Dashboard
-
-<p align="center">
-  <img src="diagram/dashboard.png" width="900">
-</p>
-
-## Circuit Diagram
-
-
-<p align="center">
-  <img src="diagram/diagram_pic.png" width="700">
-</p>
-
-## Hardware Setup
-<p align="center">
-  <img src="diagram/hardware.png" width="600">
-</p>
-
-> Add a photo of your hardware setup here.
+**Hardware Setup**
+<p align="center"><img src="diagram/hardware.png" width="600"></p>
 
 ---
 
-# 🔮 Future Enhancements
+## 🔮 Future Enhancements
 
-- 🤖 AI Assistant Integration
-- 🎙️ Voice Command Support
-- ☁️ Cloud Database Integration
-- 📊 Data Logging
-- 📱 Android Application
-- 🌍 Remote Internet Access
-- 🔔 Smart Notifications
-- 📈 Energy Consumption Monitoring
-- 🔐 User Authentication
+🎙️ Voice commands · ☁️ Cloud database · 📊 Data logging · 📱 Android app · 🌍 Remote internet access · 🔔 Smart notifications · 📈 Energy monitoring · 🔐 User authentication
 
 ---
 
----
+## 👨‍💻 Author
 
-# 👨‍💻 Author
-
-**Biswajit Biswal**  
-🎓 Bachelor of Technology (B.Tech)  
-💻 Department of Computer Science & Engineering (CSE)  
-🏛️ Gandhi Institute for Technology (GIFT), Bhubaneswar, Odisha, India  
-📍 Internship Project at National Institute of Technology (NIT), Rourkela
+**Biswajit Biswal**
+B.Tech, Computer Science & Engineering — Gandhi Institute for Technology (GIFT), Bhubaneswar, Odisha, India
+Internship Project at National Institute of Technology (NIT), Rourkela
 
 ---
 
-# 📄 License
+## 📄 License
 
-This project is developed for educational and learning purposes.
+Developed for educational and learning purposes.
 
----
-
-# ⭐ Support
-
-If you found this project useful, please consider giving it a ⭐ on GitHub.
+⭐ If this project helped you, consider starring it on GitHub.
