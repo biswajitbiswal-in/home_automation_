@@ -185,9 +185,6 @@ git clone https://github.com/biswajitbiswal-in/Home-Automation.git
   <img src="diagram/hardware.png" width="600">
 </p>
 
-> Add a photo of your hardware setup here.
->>>>>>> f0b23e5dda283109922624d225e50a47dc64ddd9
-
 ---
 
 ## 👨‍💻 Author
