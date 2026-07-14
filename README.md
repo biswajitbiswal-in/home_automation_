@@ -164,7 +164,29 @@ git clone https://github.com/biswajitbiswal-in/Home-Automation.git
 
 ## 🔮 Future Enhancements
 
+<<<<<<< HEAD
 🎙️ Voice commands · ☁️ Cloud database · 📊 Data logging · 📱 Android app · 🌍 Remote internet access · 🔔 Smart notifications · 📈 Energy monitoring · 🔐 User authentication
+=======
+## 📷 Dashboard
+
+<p align="center">
+  <img src="diagram/dashboard.png" width="900">
+</p>
+
+## Circuit Diagram
+
+
+<p align="center">
+  <img src="diagram/diagram_pic.png" width="700">
+</p>
+
+## Hardware Setup
+<p align="center">
+  <img src="diagram/hardware.png" width="600">
+</p>
+
+> Add a photo of your hardware setup here.
+>>>>>>> f0b23e5dda283109922624d225e50a47dc64ddd9
 
 ---
 
