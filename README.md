@@ -163,27 +163,35 @@ git clone https://github.com/biswajitbiswal-in/Home-Automation.git
 ---
 
 
-🔮 Future Enhancements
+## 🔮 Future Enhancements
 
-🎙️ Voice commands · ☁️ Cloud database · 📊 Data logging · 📱 Android app · 🌍 Remote internet access · 🔔 Smart notifications · 📈 Energy monitoring · 🔐 User authentication · 🗣️ Voice authentication (security) · 😊 Face authentication (security)
+- ☁️ **Cloud Database**
+  - Store device states and sensor data securely in the cloud.
+
+- 📊 **Data Logging**
+  - Maintain historical records of temperature, humidity, and device activity.
+
+- 📱 **Android Application**
+  - Develop a dedicated mobile app for seamless control and monitoring.
+
+- 🌍 **Remote Internet Access**
+  - Enable secure access and control of the system from anywhere over the internet.
+
+- 🔔 **Smart Notifications**
+  - Send real-time alerts for abnormal conditions, device status, and system events.
+
+- 📈 **Energy Monitoring**
+  - Track power consumption and provide energy usage analytics.
+
+- 🔐 **User Authentication**
+  - Implement secure login with role-based access control.
+
+- 🗣️ **Voice Authentication**
+  - Add voice-based user verification for enhanced security.
+
+- 😊 **Face Authentication**
+  - Integrate facial recognition for secure and personalized access.
 =======
-## 📷 Dashboard
-
-<p align="center">
-  <img src="diagram/dashboard.png" width="900">
-</p>
-
-## Circuit Diagram
-
-
-<p align="center">
-  <img src="diagram/diagram_pic.png" width="700">
-</p>
-
-## Hardware Setup
-<p align="center">
-  <img src="diagram/hardware.png" width="600">
-</p>
 
 ---
 
